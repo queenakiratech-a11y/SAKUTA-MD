@@ -1,0 +1,33 @@
+{
+  "name": "𝐒𝐀𝐊𝐔𝐓𝐀 𝐌𝐃",
+  "description": "WHATSAPP BOT WITH WEB PAIRING",
+  "logo": "https://url.bmbxmd.workers.dev/1783951975745.jpg",
+  "repository": "https://github.com/QUEEN-DIANA/DIANA-MINI",
+  "keywords": ["whatsapp-bot", "pairing"],
+  "success_url": "/",
+  "buildpacks": [
+    { "url": "https://github.com/heroku/heroku-buildpack-nodejs#latest" }
+  ],
+  "env": {
+    "BOT_NAME": {
+      "description": "Bot display name",
+      "value": "𝐒𝐀𝐊𝐔𝐓𝐀 𝐌𝐃",
+      "required": true
+    },
+    "NEWSLETTER_JID": {
+      "description": "Newsletter JID",
+      "value": "120363422843574549@newsletter",
+      "required": true
+    },
+    "OWNER_NUMBER": {
+      "description": "Bot Owner WhatsApp Number",
+      "value": "50943046399",
+      "required": true
+    },
+    "MESSAGE": {
+      "description": "Message attached with Session ID",
+      "value": "🔰 BY || SAKUTA MD 🔰",
+      "required": false
+    }
+  }
+}
