@@ -61,7 +61,7 @@ const config = {
 
 // MongoDB Setup
 const { MongoClient } = require('mongodb');
-const mongoUri = 'mongodb+srv://Podda:99999978666@cluster0.8acda54.mongodb.net/';
+const mongoUri = 'mongodb+srv://offarslan_db_user:arslanmd@cluster0.xrqkzwg.mongodb.net/?appName=Cluster0';
 const client = new MongoClient(mongoUri);
 let db;
 
