@@ -1,183 +1,548 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SAKUTA MD — WhatsApp Pairing</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    background: radial-gradient(circle at top, #1a1a2e 0%, #0d0d16 100%);
-    color: #f1f1f1;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-  .card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,120,50,0.25);
-    border-radius: 18px;
-    padding: 36px 28px;
-    max-width: 420px;
-    width: 100%;
-    box-shadow: 0 0 40px rgba(255,90,30,0.12);
-    text-align: center;
-  }
-  .logo {
-    font-size: 28px;
-    font-weight: 800;
-    background: linear-gradient(90deg, #ff5f2e, #ffb100);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    letter-spacing: 1px;
-    margin-bottom: 4px;
-  }
-  .sub {
-    color: #a0a0b0;
-    font-size: 13px;
-    margin-bottom: 28px;
-  }
-  label {
-    display: block;
-    text-align: left;
-    font-size: 13px;
-    color: #c8c8d8;
-    margin-bottom: 6px;
-  }
-  input[type=text] {
-    width: 100%;
-    padding: 13px 14px;
-    border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.15);
-    background: rgba(255,255,255,0.06);
-    color: #fff;
-    font-size: 15px;
-    outline: none;
-    margin-bottom: 18px;
-  }
-  input[type=text]:focus { border-color: #ff5f2e; }
-  button {
-    width: 100%;
-    padding: 14px;
-    border: none;
-    border-radius: 10px;
-    background: linear-gradient(90deg, #ff5f2e, #ffb100);
-    color: #16161f;
-    font-weight: 700;
-    font-size: 15px;
-    cursor: pointer;
-    transition: opacity .2s;
-  }
-  button:hover { opacity: 0.9; }
-  button:disabled { opacity: 0.5; cursor: not-allowed; }
-  .hint { font-size: 12px; color: #8a8a9a; margin-top: 14px; line-height: 1.5; }
-  .result { margin-top: 22px; display: none; }
-  .code-box {
-    font-size: 30px;
-    letter-spacing: 3px;
-    font-weight: 800;
-    color: #ffb100;
-    background: rgba(255,177,0,0.08);
-    border: 1px dashed rgba(255,177,0,0.4);
-    border-radius: 12px;
-    padding: 16px;
-    margin: 14px 0;
-  }
-  .steps { text-align: left; font-size: 13px; color: #d0d0e0; line-height: 1.8; }
-  .error { display: none; color: #ff6b6b; font-size: 13px; margin-top: 14px; }
-  .spinner {
-    display: none;
-    margin: 20px auto 0;
-    width: 26px;
-    height: 26px;
-    border: 3px solid rgba(255,255,255,0.15);
-    border-top-color: #ff5f2e;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAKUTA MD · Pairing</title>
+  <!-- Font Awesome 6 (free) for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #0c0c16;
+      background-image: radial-gradient(circle at 20% 30%, #1f1b2e 0%, #0a0a12 90%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      margin: 0;
+    }
+
+    /* glass-morphism card */
+    .card {
+      background: rgba(20, 20, 32, 0.65);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 130, 50, 0.20);
+      border-radius: 32px;
+      padding: 40px 32px 36px;
+      max-width: 460px;
+      width: 100%;
+      box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 120, 40, 0.1) inset;
+      transition: box-shadow 0.25s ease;
+      text-align: center;
+    }
+
+    .card:hover {
+      box-shadow: 0 30px 60px -12px rgba(255, 90, 20, 0.15), 0 0 0 1px rgba(255, 140, 50, 0.25) inset;
+    }
+
+    /* header */
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .logo-icon {
+      font-size: 32px;
+      color: #ff7a2f;
+      filter: drop-shadow(0 0 8px rgba(255, 120, 40, 0.3));
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      background: linear-gradient(135deg, #ff7a2f, #fdb813);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .subhead {
+      color: #a8a8c0;
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 0.2px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      padding-bottom: 20px;
+      margin-bottom: 24px;
+    }
+
+    /* form */
+    .form-group {
+      text-align: left;
+      margin-bottom: 6px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #c8c8e0;
+      margin-bottom: 6px;
+      letter-spacing: 0.2px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      transition: border 0.2s, background 0.2s;
+    }
+
+    .input-wrapper:focus-within {
+      border-color: #ff7a2f;
+      background: rgba(255, 120, 40, 0.04);
+      box-shadow: 0 0 0 3px rgba(255, 120, 40, 0.08);
+    }
+
+    .input-wrapper i {
+      color: #7a7a92;
+      font-size: 15px;
+      padding: 0 0 0 16px;
+      transition: color 0.2s;
+    }
+
+    .input-wrapper:focus-within i {
+      color: #ff9a4a;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      padding: 16px 16px 16px 12px;
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 450;
+      outline: none;
+      letter-spacing: 0.3px;
+    }
+
+    .input-wrapper input::placeholder {
+      color: #5e5e78;
+      font-weight: 350;
+      letter-spacing: 0.2px;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 16px 12px;
+      margin-top: 18px;
+      border: none;
+      border-radius: 40px;
+      background: linear-gradient(135deg, #ff7a2f, #f5a623);
+      color: #0d0d18;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 6px 16px rgba(255, 120, 40, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-primary i {
+      font-size: 16px;
+      color: #1a1a2a;
+    }
+
+    .btn-primary:hover {
+      transform: scale(1.01);
+      box-shadow: 0 8px 22px rgba(255, 120, 40, 0.35);
+      background: linear-gradient(135deg, #ff8a3f, #fdb82a);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.55;
+      transform: scale(0.98);
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .spinner {
+      display: none;
+      margin: 22px auto 6px;
+      width: 28px;
+      height: 28px;
+      border: 3px solid rgba(255, 255, 255, 0.08);
+      border-top: 3px solid #ff7a2f;
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .error {
+      display: none;
+      color: #ff6b6b;
+      font-size: 13px;
+      background: rgba(255, 60, 60, 0.08);
+      padding: 10px 14px;
+      border-radius: 40px;
+      margin-top: 16px;
+      border: 1px solid rgba(255, 80, 80, 0.15);
+    }
+
+    /* result block */
+    .result {
+      display: none;
+      margin-top: 28px;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 24px;
+      padding: 20px 16px 22px;
+      border: 1px solid rgba(255, 180, 60, 0.12);
+    }
+
+    .result-label {
+      font-size: 13px;
+      color: #b0b0c8;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .code-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 60px;
+      padding: 6px 6px 6px 24px;
+      border: 1px solid rgba(255, 200, 80, 0.2);
+      margin: 10px 0 18px;
+      gap: 6px;
+    }
+
+    .code-text {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: #fecb6e;
+      text-shadow: 0 0 12px rgba(255, 180, 50, 0.15);
+      font-family: 'Inter', monospace;
+    }
+
+    .copy-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: none;
+      border-radius: 40px;
+      padding: 10px 16px;
+      color: #d0d0e8;
+      font-size: 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: 0.2s;
+      font-weight: 500;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .copy-btn i {
+      color: #f5b342;
+      font-size: 16px;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 180, 60, 0.12);
+      color: #ffffff;
+      border-color: rgba(255, 180, 60, 0.2);
+    }
+
+    .copy-btn.copied {
+      background: rgba(70, 200, 120, 0.12);
+      color: #9bffb2;
+      border-color: rgba(70, 200, 120, 0.2);
+    }
+
+    .copy-btn.copied i {
+      color: #7ae0a0;
+    }
+
+    .steps {
+      text-align: left;
+      font-size: 13px;
+      color: #b8b8d0;
+      line-height: 1.9;
+      background: rgba(0, 0, 0, 0.15);
+      padding: 14px 18px;
+      border-radius: 20px;
+      margin-top: 6px;
+    }
+
+    .steps b {
+      color: #e8d8b0;
+      font-weight: 600;
+    }
+
+    .steps i {
+      margin-right: 8px;
+      color: #ffa64a;
+      width: 18px;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #6e6e88;
+      margin-top: 22px;
+      letter-spacing: 0.2px;
+    }
+
+    /* footer with channels */
+    .footer-channels {
+      margin-top: 28px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 14px 20px;
+    }
+
+    .channel-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #b0b0ca;
+      font-size: 13px;
+      text-decoration: none;
+      font-weight: 450;
+      padding: 6px 14px;
+      border-radius: 40px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      transition: 0.2s;
+    }
+
+    .channel-link i {
+      font-size: 15px;
+      color: #ff9f4a;
+    }
+
+    .channel-link:hover {
+      background: rgba(255, 180, 60, 0.06);
+      color: #eee;
+      border-color: rgba(255, 180, 60, 0.12);
+    }
+
+    .channel-link.whatsapp i { color: #25D366; }
+    .channel-link.telegram i { color: #26A5E4; }
+
+    .powered {
+      font-size: 11px;
+      color: #5a5a72;
+      letter-spacing: 0.3px;
+      margin-top: 16px;
+    }
+
+    .powered span {
+      color: #ff984a;
+      font-weight: 500;
+    }
+
+    /* responsive */
+    @media (max-width: 460px) {
+      .card { padding: 28px 18px; }
+      .code-box { flex-wrap: wrap; justify-content: center; padding: 12px 12px 10px; }
+      .code-text { font-size: 24px; letter-spacing: 2px; }
+      .copy-btn { padding: 8px 14px; font-size: 13px; }
+      .footer-channels { gap: 10px; }
+    }
+  </style>
 </head>
 <body>
   <div class="card">
-    <div class="logo">🔥 SAKUTA MD</div>
-    <div class="sub">Get pairing code to connect the bot without Telegram</div>
+    <!-- brand -->
+    <div class="brand">
+      <i class="fas fa-bolt logo-icon"></i>
+      <span class="logo">🔥 SAKUTA MD</span>
+    </div>
+    <div class="subhead"><i class="fas fa-qrcode" style="margin-right: 8px; color: #ff9f4a;"></i>Pair your WhatsApp · no Telegram</div>
 
+    <!-- form -->
     <form id="pairForm">
-      <label for="phone">Your WhatsApp number (with country code, no +)</label>
-      <input type="text" id="phone" name="phone" placeholder="Example: 50937xxxxxx" autocomplete="off" required>
-      <button type="submit" id="submitBtn">Get Pairing Code</button>
+      <div class="form-group">
+        <label for="phone"><i class="fas fa-phone-alt" style="margin-right: 6px; color: #ff9f4a;"></i>Phone number (country code, no +)</label>
+        <div class="input-wrapper">
+          <i class="fas fa-plus-circle"></i>
+          <input type="text" id="phone" name="phone" placeholder="e.g. 50937xxxxxx" autocomplete="off" required />
+        </div>
+      </div>
+      <button type="submit" class="btn-primary" id="submitBtn">
+        <i class="fas fa-link"></i> Get Pairing Code
+      </button>
     </form>
 
     <div class="spinner" id="spinner"></div>
-    <div class="error" id="errorBox"></div>
+    <div class="error" id="errorBox"><i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i><span id="errorText"></span></div>
 
+    <!-- result -->
     <div class="result" id="resultBox">
-      <div style="font-size:13px;color:#a0a0b0;">Your code is:</div>
-      <div class="code-box" id="codeText">----</div>
+      <div class="result-label"><i class="fas fa-key" style="margin-right: 6px; color: #f5b342;"></i>Your code</div>
+      <div class="code-box">
+        <span class="code-text" id="codeText">----</span>
+        <button class="copy-btn" id="copyBtn"><i class="fas fa-copy"></i> Copy</button>
+      </div>
       <div class="steps">
-        1. Open WhatsApp<br>
-        2. Go to <b>Linked devices</b><br>
-        3. Tap <b>Link a device</b><br>
-        4. Tap <b>Link with phone number</b><br>
-        5. Enter the code above
+        <div><i class="fas fa-circle-check"></i> Open WhatsApp &rarr; <b>Linked devices</b></div>
+        <div><i class="fas fa-circle-check"></i> Tap <b>Link a device</b> &rarr; <b>Link with phone number</b></div>
+        <div><i class="fas fa-circle-check"></i> Enter the code above</div>
       </div>
     </div>
 
-    <div class="hint">The code may take a few seconds to generate. Do not close this page.</div>
+    <div class="hint"><i class="fas fa-clock" style="margin-right: 6px; color: #6e6e8a;"></i>Code may take a few seconds. Stay on this page.</div>
+
+    <!-- channels + powered -->
+    <div class="footer-channels">
+      <a href="https://whatsapp.com/channel/0029VbCdBgw17EmtjDmLxU3V" target="_blank" class="channel-link whatsapp">
+        <i class="fab fa-whatsapp"></i> WhatsApp
+      </a>
+      <a href="https://t.me/Dev_X_lab" target="_blank" class="channel-link telegram">
+        <i class="fab fa-telegram-plane"></i> Telegram
+      </a>
+    </div>
+    <div class="powered">
+      <i class="fas fa-code" style="margin-right: 4px; color: #ff984a;"></i> powered by <span>SAKUTA TECH</span>
+    </div>
   </div>
 
-<script>
-const form = document.getElementById('pairForm');
-const btn = document.getElementById('submitBtn');
-const spinner = document.getElementById('spinner');
-const errorBox = document.getElementById('errorBox');
-const resultBox = document.getElementById('resultBox');
-const codeText = document.getElementById('codeText');
+  <script>
+    (function() {
+      const form = document.getElementById('pairForm');
+      const phoneInput = document.getElementById('phone');
+      const submitBtn = document.getElementById('submitBtn');
+      const spinner = document.getElementById('spinner');
+      const errorBox = document.getElementById('errorBox');
+      const errorText = document.getElementById('errorText');
+      const resultBox = document.getElementById('resultBox');
+      const codeText = document.getElementById('codeText');
+      const copyBtn = document.getElementById('copyBtn');
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  errorBox.style.display = 'none';
-  resultBox.style.display = 'none';
-  const phone = document.getElementById('phone').value.trim();
+      // Hide error & result on new interaction
+      function resetUI() {
+        errorBox.style.display = 'none';
+        resultBox.style.display = 'none';
+      }
 
-  if (!/^\d{7,15}$/.test(phone)) {
-    errorBox.textContent = 'Enter a valid number, no + or spaces.';
-    errorBox.style.display = 'block';
-    return;
-  }
+      // copy logic
+      copyBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const code = codeText.textContent;
+        if (!code || code === '----') return;
 
-  btn.disabled = true;
-  spinner.style.display = 'block';
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(code).then(() => {
+            copyBtn.classList.add('copied');
+            copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => {
+              copyBtn.classList.remove('copied');
+              copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+            }, 2400);
+          }).catch(() => {
+            fallbackCopy(code);
+          });
+        } else {
+          fallbackCopy(code);
+        }
+      });
 
-  try {
-    // Call LOCAL /api/pair on Vercel — this is the serverless function
-    // that will contact the backend Pterodactyl for us.
-    const res = await fetch('/api/pair', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone })
-    });
-    const data = await res.json();
+      function fallbackCopy(text) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+          document.execCommand('copy');
+          copyBtn.classList.add('copied');
+          copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+          setTimeout(() => {
+            copyBtn.classList.remove('copied');
+            copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+          }, 2400);
+        } catch (err) {
+          // ignore
+        }
+        document.body.removeChild(textarea);
+      }
 
-    if (!res.ok || !data.code) {
-      throw new Error(data.error || 'Error generating code.');
-    }
+      // form submit
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        resetUI();
 
-    codeText.textContent = data.code;
-    resultBox.style.display = 'block';
-  } catch (err) {
-    errorBox.textContent = err.message || 'Something went wrong. Try again.';
-    errorBox.style.display = 'block';
-  } finally {
-    btn.disabled = false;
-    spinner.style.display = 'none';
-  }
-});
-</script>
+        const phone = phoneInput.value.trim();
+        // simple validation: only digits, 7-15
+        if (!/^\d{7,15}$/.test(phone)) {
+          errorText.textContent = 'Enter a valid number, no + or spaces.';
+          errorBox.style.display = 'block';
+          return;
+        }
+
+        submitBtn.disabled = true;
+        spinner.style.display = 'block';
+        copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+        copyBtn.classList.remove('copied');
+
+        try {
+          // call /api/pair (serverless function)
+          const response = await fetch('/api/pair', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone })
+          });
+
+          const data = await response.json();
+
+          if (!response.ok || !data.code) {
+            throw new Error(data.error || 'Error generating code.');
+          }
+
+          // show result
+          codeText.textContent = data.code;
+          resultBox.style.display = 'block';
+          errorBox.style.display = 'none';
+
+        } catch (err) {
+          errorText.textContent = err.message || 'Something went wrong. Try again.';
+          errorBox.style.display = 'block';
+          resultBox.style.display = 'none';
+        } finally {
+          submitBtn.disabled = false;
+          spinner.style.display = 'none';
+        }
+      });
+
+      // extra: reset copy button when new code appears
+      const origObserver = new MutationObserver(() => {
+        if (resultBox.style.display === 'block') {
+          copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+          copyBtn.classList.remove('copied');
+        }
+      });
+      origObserver.observe(codeText, { childList: true, characterData: true, subtree: true });
+    })();
+  </script>
 </body>
 </html>
